@@ -10,6 +10,12 @@
 import random
 
 
+def game_begin():
+    print('-----------------')
+    print("ИГРА НАЧИНАЕТСЯ")
+    print('-----------------')
+
+
 def get_candy_number():
     '''
     Функция проверяет число, которок пользователь вводит для суммы конфет в кучке. Возвращает модуль числа.
@@ -69,6 +75,76 @@ def turn_change(player_num):
     return player_num
 
 
+def start_game():
+    print('-----------------')
+    print("ДОБРО ПОЖАЛОВАТЬ В ИГРУ CANDY CRUSH")
+    print('-----------------')
+    answer = input("Вы будете играть с человеком? (да/нет): ")
+    if ((answer.lower()) == 'да'):
+        print("Ок, усаживайтесь по-удобнее.")
+        game_pvp()
+    else:
+        print("Тогда ваш оппонент - компьютер.")
+        game_bot()
+
+
+def turn_wbot(cnd_pull_max,candy_qt, player):
+    while candy_qt > 0:
+        if player == 1:
+            num = int(input("Сколько вытянуть конфет: "))
+            if num > cnd_pull_max:
+                print(f"Нельзя брать больше {cnd_pull_max} ")
+            if num > candy_qt:
+                print(f"Нельзя взять конфет больше чем сейчас в кучке ")
+            else:
+                candy_qt -= num
+                if candy_qt >0:
+                    print(f'В кучке {candy_qt} конфет')
+                elif candy_qt <= 0:
+                    print('В кучке не осталось конфет!')
+                    continue
+                player = turn_change(player)
+                print(f'Переход хода.')
+        if player == 2:
+            num = random.randint(1, cnd_pull_max)
+            if num > candy_qt:
+                num = random.randint(1, candy_qt)
+            else:
+                print('-----------------')
+                print(f"Компьютер вытягивает {num} конфет.")
+                candy_qt -= num
+                if candy_qt > 0:
+                    print(f'В кучке {candy_qt} конфет')
+                # print('-----------------')
+                elif candy_qt <= 0:
+                    print('В кучке не осталось конфет!')
+                    continue
+                player = turn_change(player)
+                print(f'Переход хода.')
+    return player
+
+
+def turn(cnd_pull_max, candy_qt, player):
+    while candy_qt > 0:
+        num = int(input("Сколько вытянуть конфет: "))
+        if num > cnd_pull_max:
+            print(f"Нельзя брать больше {cnd_pull_max} ")
+        if num > candy_qt:
+            print(f"Нельзя взять конфет больше чем сейчас в кучке ")
+        else:
+            print('-----------------')
+            candy_qt -= num
+            if candy_qt > 0:
+                print(f'В кучке {candy_qt} конфет')
+            elif candy_qt <= 0:
+                print('В кучке не осталось конфет!')
+                continue
+            player = turn_change(player)
+            print(f'Теперь ходит {player} игрок')
+            current_player = player
+    return candy_qt
+
+
 def game_pvp():
     '''
     Функция содержит в себе
@@ -81,30 +157,16 @@ def game_pvp():
         candy_pull_max = get_pull_number_max()
         if candy_pull_max > candy_qyt:
             print(
-                "Нельзя вытянуть больше конфет, чем их количество в кучке. Введите число меньше!")
+                "Нельзя вытягивать больше конфет, чем их количество в кучке. Попробуем еще раз.")
             game_pvp()
         elif candy_pull_max == 0:
             print(
                 "Если ничего не вытягивать из кучки, то и поиграть не удастся. Введите число больше нуля.")
             game_pvp()
         else:
-            print('-----------------')
-            print("ИГРА НАЧИНАЕТСЯ")
-            print('-----------------')
+            game_begin()
             current_player = get_first_turn()
-            while candy_qyt > 0:
-                num = int(input("Сколько вытянуть конфет: "))
-                if num > candy_pull_max:
-                    print(f"Нельзя брать больше {candy_pull_max} ")
-                else:
-                    print('-----------------')
-                    candy_qyt -= num
-                    print(f'В кучке {candy_qyt} конфет')
-                    if candy_qyt == 0:
-                        continue
-                    current_player = turn_change(current_player)
-                    print(f'Теперь ходит {current_player} игрок')
-
+            turn(candy_pull_max, candy_qyt, current_player)
             print(f"Выиграл {turn_change(current_player)} игрок!")
             print('-----------------')
             print("КОНЕЦ ИГРЫ")
@@ -132,36 +194,9 @@ def game_bot():
                 "Если ничего не вытягивать из кучки, то и поиграть не удастся. Введите число больше нуля.")
             game_bot()
         else:
-            print('-----------------')
-            print("ИГРА НАЧИНАЕТСЯ")
-            print('-----------------')
+            game_begin()
             current_player = get_first_turn_wbot()
-            while candy_qyt > 0:
-                if current_player == 1:
-                    num = int(input("Сколько вытянуть конфет: "))
-                    if num > candy_pull_max:
-                        print(f"Нельзя брать больше {candy_pull_max} ")
-                    else:
-                        candy_qyt -= num
-                        print(f'В кучке {candy_qyt} конфет')
-                        if candy_qyt == 0:
-                            continue
-                        current_player = turn_change(current_player)
-                        print(f'Переход хода.')
-                if current_player == 2:
-                    num = random.randint(1, candy_pull_max)
-                    if num > candy_qyt:
-                        num = random.randint(1, candy_qyt)
-                    else:
-                        print('-----------------')
-                        print(f"Компьютер вытягивает {num} конфет.")
-                        candy_qyt -= num
-                        print(f'В кучке {candy_qyt} конфет')
-                        print('-----------------')
-                        if candy_qyt == 0:
-                            continue
-                        current_player = turn_change(current_player)
-                        print(f'Переход хода.')
+            turn_wbot(candy_pull_max,candy_qyt,current_player)
             if current_player == 1:
                 print("Вы проиграли")
             else:
@@ -174,19 +209,6 @@ def game_bot():
                 start_game()
             else:
                 print("Хорошо, пока!")
-
-
-def start_game():
-    print('-----------------')
-    print("ДОБРО ПОЖАЛОВАТЬ В ИГРУ CANDY CRUSH")
-    print('-----------------')
-    answer = input("Вы будете играть с человеком? (да/нет): ")
-    if ((answer.lower()) == 'да'):
-        print("Ок, усаживайтесь по-удобнее.")
-        game_pvp()
-    else:
-        print("Тогда ваш оппонент - компьютер.")
-        game_bot()
 
 
 start_game()
