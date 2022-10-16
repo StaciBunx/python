@@ -1,9 +1,7 @@
-from datetime import datetime as dt
+import logging
 
-def logger(data, result):
-    '''
-    Записывает время, выражение и результат
-    '''
-    time = dt.now().strftime('%d.%m.%Y - %H:%M')
-    with open('log.txt', 'a', encoding = 'UTF-8') as file:
-        file.write(f'{time}: \t{data} = {result}\n') 
+logging.basicConfig(filename='log.txt',
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    level=logging.INFO
+                    )
+logger = logging.getLogger(__name__)
